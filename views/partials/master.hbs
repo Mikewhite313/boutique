@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K467LW9" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <!-- ======= Header ======= -->
+    <header class="header">
+        <nav class="navbar fixed-top navbar-expand-lg navbar-dark">
+            <div class="container">
+                <a href="{{ url('/') }}" class="navbar-brand"><img src="" width="100%"></a> @guest
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse nav-menu-item" id="navbarCollapse">
+                    <div class="navbar-nav ml-auto">
+                        <a href="" class="nav-item nav-link">Find your UDID</a>
+                        <a href="https://appforshare.io/blog" class="nav-item nav-link">Blog</a>
+                        <a href="" class="nav-item nav-link">Pricing</a>
+                        <a href="javascript:void();" class="nav-item nav-link login_btn" data-toggle="modal"
+                            data-target="#LoginRegisterModal">Login</a>
+                        <a href="javascript:void();" class="nav-item nav-link register_btn" data-toggle="modal"
+                            data-target="#LoginRegisterModal">Register</a>
+                    </div>
+                </div>
+                @else
+                <ul class="user-nav-mg">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="javascript:void();" id="navbarDropdownMenuLink"
+                            role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            @if(Auth::user()->profile)
+                            @if(Auth::user()->profile->image)
+                            <img src="" class="user-img" width="40" height="40">
+                            @else
+                            <img src="" class="user-img" width="40" height="40">
+                            @endif
+                            @else
+                            <img src="{{ asset('staging/assets/img/user1.jpg') }}" class="user-img" width="40"
+                                height="40">
+                            @endif
+                            &nbsp;<span class="userNameMobiel">{{ Auth::user()->name }}</span>
+                        </a>
+                        @if(Auth::user()->provider == 'facebook')
+                        <script>window.dataLayer.push({ 'event': 'log-in', 'platform': 'facebook' });</script>
+                        @elseif(Auth::user()->provider == 'google')
+                        <script>window.dataLayer.push({ 'event': 'log-in', 'platform': 'google' });</script>
+                        @elseif(Auth::user()->provider == 'linkedin')
+                        <script>window.dataLayer.push({ 'event': 'log-in', 'platform': 'linkedin' });</script>
+                        @elseif(Auth::user()->provider == 'github')
+                        <script>window.dataLayer.push({ 'event': 'log-in', 'platform': 'github' });</script>
+                        @endif
+                        <div class="dropdown-menu menu-dash pullDown" aria-labelledby="navbarDropdownMenuLink">
+                            <div class="user-mg">
+                                <div style="display: flex; ">
+                                    <a class="mmd" href="{{ route('user.dashboard') }}">
+                                        @if(Auth::user()->profile)
+                                        @if(Auth::user()->profile->image)
+                                        <img src="{{ asset('assets/images/users/'. Auth::user()->profile->image) }}"
+                                            class="user-img" width="35" height="35">
+                                        @else
+                                        <img src="{{ asset('staging/assets/img/user1.jpg') }}" class="user-img"
+                                            width="35" height="35">
+                                        @endif
+                                        @else
+                                        <img src="{{ asset('staging/assets/img/user1.jpg') }}" class="user-img"
+                                            width="35" height="35">
+                                        @endif
+                                    </a>
+                                    <div class="user-dd">
+                                        <a href="{{ route('user.dashboard') }}"><span
+                                                style="text-transform: capitalize;">{{
+                                                Auth::user()->name }}</span></a>
+                                        <a href="{{ route('user.dashboard') }}" class="uss-email"
+                                            style="font-size: 12px;">view profile</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="menuTTDS">
+                                <form action="{{ route('logout') }}" method="post" id="myform">
+                                    @csrf
+                                    <a class="dropdown-itemdd" href="{{ route('user.dashboard') }}">Dashboard</a>
+                                    <a class="dropdown-itemdd" href="{{ route('user.faq') }}">FAQ's</a>
+                                    <a class="dropdown-itemdd" href="{{ route('udid') }}">Find your UDID</a>
+                                    <a class="dropdown-itemdd" href="https://appforshare.io/blog">Blog</a>
+                                    <a class="dropdown-itemdd" href="{{ route('pricings') }}">Pricing</a>
+                                    <a class="dropdown-itemdd" type="button" data-toggle="modal"
+                                        data-target="#contactUs">Contact Us</a>
+                                    <hr>
+                                    <a class="dropdown-itemdd" href="javascript:void();"
+                                        onclick="document.getElementById('myform').submit(); return false;">Logout</a>
+                                </form>
+                            </div>
+                            <div class="dropAfterTTD"
+                                style="position: absolute; left: 0px; transform: translate(26px, 0px);"></div>
+                        </div>
+                    </li>
+                </ul>
+                @endguest
+            </div>
+        </nav>
+    </header>
+    <!-- End Header -->
+
+    {{{body}}}
+
+    <!-- ======= Login and register popup Start ======= -->
+    <div class="container">
+        <div class="modal fade login-models" id="LoginRegisterModal" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 650px!important; ">
+                <div class="modal-content" style="box-shadow: 0px 0px 10px 0px #7575756e; border:none!important;">
+                    <div class="modal-header border-bottom-0">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                            style="outline: none;">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body logformDD mob-mod-log" style="padding: 100px 150px;">
+                        <div class="form-title text-center">
+                            <h3>Login</h3>
+                        </div>
+                        <div class="d-flex flex-column text-center lldd">
+                            <form id="login-form" action="{{ route('login') }}" method="post" class="log-fm-JY"
+                                style="padding: 0px 20px;">
+                                @csrf
+                                <p>Enter the email address associated with your account</p>
+                                <span style="display:none; color:red;" id="login-errors"></span>
+                                <div class="form-group">
+                                    <input type="text" name="email" class="inpt-me form-control" id="email1"
+                                        placeholder="Email">
+                                    @error('email')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" name="password" class="inpt-me form-control" id="password1"
+                                        placeholder="Password">
+                                    @error('password')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                                <br>
+                                <button type="submit" class="btn-round bg-backgg">Login</button><br><br>
+                                <a href="javascript:void();" class="allSigninOption bttndd"><i
+                                        class="fas fa-chevron-left"></i> &nbsp;All sign in options</a>
+                            </form>
+                            <div class="social-login-JY" style="padding: 0px 40px;">
+                                <a href="{{ url('auth/google') }}" class="btn-me btn-block btn-round"><img
+                                        src="{{ asset('staging/assets/img/icon/icons-google.png') }}"> &nbsp;&nbsp;Sign
+                                    in
+                                    with Google</a>
+                                <a href="{{ url('auth/github') }}" class="btn-me btn-block btn-round"><img
+                                        src="{{ asset('staging/assets/img/icon/icons-github.png') }}">&nbsp;&nbsp;Sign
+                                    in
+                                    with Github</a>
+                                <a href="{{ url('auth/linkedin') }}" class="btn-me btn-block btn-round"><img
+                                        src="{{ asset('staging/assets/img/icon/icons-linkedin.png') }}">&nbsp;&nbsp;Sign
+                                    in
+                                    with LinkedIn</a>
+                                <a href="javascript:void();" class="btn-me btn-block btn-round signinwithEmail"><img
+                                        src="{{ asset('staging/assets/img/icon/icons-envelope.png') }}">&nbsp;&nbsp;Sign
+                                    in
+                                    with Email</a>
+                            </div>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-center">
+                            <div class="signup-section">No account? <a class="text-info btn-sig registerDD register_btn"
+                                    style="cursor: pointer; color: #F2644F!important;"> Create one</a>.</div>
+                        </div>
+                    </div>
+                    <div class="modal-body regformDD mob-mod-reg "
+                        style="padding: 100px 150px; display:none!important;">
+                        <div class="form-title text-center">
+                            <h3>Register</h3>
+                        </div>
+                        <div class="d-flex flex-column text-center lldd">
+                            <form id="register-form" method="POST" action="{{ route('register-user') }}"
+                                class="reg-fm-JY" style="padding: 0px 20px;">
+                                {{ csrf_field() }}
+                                <p>Enter your Detail and create an account.</p>
+                                <span style="display:none; color:red;" id="register-errors"></span>
+                                <div class="form-group">
+                                    <input type="name" name="name" class="form-control inpt-me" id="first-name"
+                                        placeholder="Name">
+                                    @error('name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" name="email" class="form-control inpt-me" id="last-name"
+                                        placeholder="Email">
+                                    @error('email')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" name="password" class="form-control inpt-me" id="password"
+                                        placeholder="Password">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" name="password_confirmation" class="form-control inpt-me"
+                                        id="password" placeholder="Confirm password">
+                                </div>
+                                <br>
+                                <button type="submit" class="btn btn-me btn-round bg-backgg">Sign Up</button><br><br>
+                                <a href="javascript:void();" class="allSignupOption bttndd"><i
+                                        class="fas fa-chevron-left"></i> &nbsp;All sign up options</a>
+                            </form>
+                            <form id="otp-form" action="{{ route('verify-otp') }}" method="post" class=""
+                                style="padding: 0px 20px; display: none;">
+                                @csrf
+                                <input type="hidden" name="user_id" id="user_id">
+                                <p>Enter the OTP code sent to your registered email.</p>
+                                <span style="display:none; color:red;" id="otp-errors"></span>
+                                <div class="form-group">
+                                    <input type="text" name="otp" class="inpt-me form-control" id="otp"
+                                        placeholder="OTP">
+                                    @error('otp')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                                <br>
+                                <button type="submit" class="btn-round bg-backgg">Submit</button><br>
+                            </form>
+                            <div class="social-login-JY" style="padding: 0px 40px;">
+                                <a href="{{ url('auth/google') }}" class="btn-me btn-block btn-round"><img
+                                        src="{{ asset('staging/assets/img/icon/icons-google.png') }}">&nbsp;&nbsp;Sign
+                                    in
+                                    with Google</a>
+                                <a href="{{ url('auth/github') }}" class="btn-me btn-block btn-round"><img
+                                        src="{{ asset('staging/assets/img/icon/icons-github.png') }}">&nbsp;&nbsp;Sign
+                                    in
+                                    with Github</a>
+                                <a href="{{ url('auth/linkedin') }}" class="btn-me btn-block btn-round"><img
+                                        src="{{ asset('staging/assets/img/icon/icons-linkedin.png') }}">&nbsp;&nbsp;Sign
+                                    in
+                                    with LinkedIn</a>
+                                <a href="javascript:void();" class="btn-me btn-block btn-round signupwithEmail"><img
+                                        src="{{ asset('staging/assets/img/icon/icons-envelope.png') }}">&nbsp;&nbsp;Sign
+                                    up
+                                    with Email</a>
+                            </div>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-center">
+                            <div class="signin-section">Already have an account? <a
+                                    class="text-info btn-sig loginDD login_btn"
+                                    style="cursor: pointer; color: #F2644F!important;"> Sign in</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Login and register popup -->
+
+
+    <!-- ======= Contact Us popup Start ======= -->
+    <div class="container">
+        <div class="modal fade modelhide" id="contactUs" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 950px!important; ">
+                <div class="modal-content" style="box-shadow: 0px 0px 10px 0px #7575756e; border:none;">
+                    <div class="modal-header border-bottom-0">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                            style="outline: none;">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body ContformDD mob-mod-log">
+                        <form id="contact-form">
+                            <div class="rounded-0">
+                                <div class="card-header p-0" style="margin-bottom: 20px;">
+                                    <div class="bg-info2 text-black text-center">
+                                        <h3><i class="fa fa-envelope"></i> Contact Us</h3>
+                                        <p class="m-0">Connect appforshare.io</p>
+                                    </div>
+                                </div>
+                                <div class="card-body p-33">
+                                    <div class="form-group frmMargin">
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text"><i class="fa fa-user text-info2"></i>
+                                                </div>
+                                            </div>
+                                            <input type="text" class="form-control outLin" id="name3" name="name"
+                                                placeholder="Name">
+                                        </div>
+                                        <span class="text-danger" id="name-error3"></span>
+                                    </div>
+                                    <div class="form-group frmMargin">
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text"><i class="fa fa-envelope text-info2"></i>
+                                                </div>
+                                            </div>
+                                            <input type="text" class="form-control outLin" id="email3" name="email"
+                                                placeholder="Email">
+                                        </div>
+                                        <span class="text-danger" id="email-error3"></span>
+                                    </div>
+                                    <div class="form-group frmMargin">
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text"><i class="fa fa-phone text-info2"></i>
+                                                </div>
+                                            </div>
+                                            <input type="text" class="form-control outLin" id="phone3" name="phone"
+                                                placeholder="Mobile">
+                                        </div>
+                                        <span class="text-danger" id="phone-error3"></span>
+                                    </div>
+                                    <div class="form-group frmMargin">
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text"><i class="fa fa-comment text-info2"></i>
+                                                </div>
+                                            </div>
+                                            <textarea id="your_message3" name="your_message" class="form-control outLin"
+                                                placeholder="Message"></textarea>
+                                        </div>
+                                        <span class="text-danger" id="your_message-error3"></span>
+                                    </div>
+                                    <div class="text-center" style=" margin-top: 50px;">
+                                        <button id="submit" class="btn-info2">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Contact Us popup -->
+
+
+    <!-- Sidebar Contact Us Start -->
+    <div class="sidebar-contact">
+        <div class="toggle">
+            <span class="text-orientation"> Contact Us</span>
+        </div>
+        <div class="text-black text-center">
+            <h3><i class="fa fa-envelope"></i> Contact Us</h3>
+            <p class="m-0">Connect appforshare.io</p>
+        </div>
+        <hr>
+        <div class="scroll">
+            <form id="contact-sidebar-form">
+                <div class="form-group">
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text"><i class="fa fa-user text-info2"></i></div>
+                        </div>
+                        <input type="text" class="form-control outLin" id="name2" name="name" placeholder="Enter Name">
+                    </div>
+                    <span class="text-danger" id="name-error2"></span>
+                </div>
+                <div class="form-group">
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text"><i class="fa fa-envelope text-info2"></i></div>
+                        </div>
+                        <input type="text" class="form-control outLin" id="email2" name="email"
+                            placeholder="Enter Email">
+                    </div>
+                    <span class="text-danger" id="email-error2"></span>
+                </div>
+                <div class="form-group">
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text"><i class="fa fa-phone text-info2"></i></div>
+                        </div>
+                        <input type="text" class="form-control outLin" id="phone2" name="phone"
+                            placeholder="Enter Mobile Number">
+                    </div>
+                    <span class="text-danger" id="phone-error2"></span>
+                </div>
+                <div class="form-group">
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text"><i class="fa fa-comment text-info2"></i></div>
+                        </div>
+                        <textarea id="your_message2" name="your_message" class="form-control outLin"
+                            placeholder="Message"></textarea>
+                    </div>
+                    <span class="text-danger" id="your_message-error2"></span>
+                </div>
+                <div class="text-center">
+                    <button id="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Sidebar Contact Us End -->
+
+
+    <!-- Sidebar Client Reviews Start -->
+    <div class="sidebar-reviews reviewToggleDown">
+        <div class="toggle2">
+            <span class="text-orientation-reviews">App Reviews </span>
+        </div>
+        <div class="text-black text-center">
+            <h3><i class="fa fa-comments " aria-hidden="true"></i> App Reviews</h3>
+        </div>
+        <hr>
+        <div class="scroll2">
+            <form id="reviews-sidebar-form" method="post" action="javascript:void(0);">
+                @csrf
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="alert alert-success d-none" id="msg_div">
+                            <span id="res_message"></span>
+                        </div>
+                    </div>
+                </div>
+                <label style="margin-bottom: 0;">Your Rating</label>
+                <div class="rating">
+                    <input type="radio" name="rating" value="5" id="5"><label for="5">☆</label>
+                    <input type="radio" name="rating" value="4" id="4"><label for="4">☆</label>
+                    <input type="radio" name="rating" value="3" id="3"><label for="3">☆</label>
+                    <input type="radio" name="rating" value="2" id="2"><label for="2">☆</label>
+                    <input type="radio" name="rating" value="1" id="1"><label for="1">☆</label>
+                </div>
+                <div class="form-group">
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text"><i class="fa fa-comments text-info2" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <textarea id="description" name="description" class="form-control outLin"
+                            placeholder="Your Reviews"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text"><i class="fa fa-user text-info2"></i></div>
+                        </div>
+                        @if(Auth::check())
+                        <input type="text" class="form-control outLin" id="name" name="name"
+                            value="{{ Auth::user()->name }}" placeholder="Name">
+                        @else
+                        <input type="text" class="form-control outLin" id="name" name="name" placeholder="Name">
+                        @endif
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text"><i class="fa fa-envelope text-info2"></i></div>
+                        </div>
+                        @if(Auth::check())
+                        <input type="text" class="form-control outLin" id="email" name="email"
+                            value="{{ Auth::user()->email }}" placeholder="Email">
+                        @else
+                        <input type="text" class="form-control outLin" id="email" name="email" placeholder="Email">
+                        @endif
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" id="send_form">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Sidebar Client Reviews End -->
+
+    <!-- ======= Start Footer Section ======= -->
+    <footer class="footerSection">
+        <div class="divider-bottom"></div>
+        <div class="container">
+            <div class="row bottm2ndSec">
+
+                <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3">
+                    <div class="leftSideSec">
+                        <img src="{{ asset('assets/footer-img/logo-s.png') }}">
+                        <p>Development, Ad-hoc & In-house App Over The Air Installation</p>
+                        <a type="button" class="register_btn btnRegFoo" data-toggle="modal"
+                            data-target="#LoginRegisterModal">Register</a>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-6 col-lg-2 col-xl-2">
+                    <div class="firstSecBottLef">
+                        <h4>Important Link</h4>
+                    </div>
+                    <div class="firstSecBotrRigh">
+                        <ul>
+                            <li><a href="{{ route('udid') }}">Find Your UDID</a></li>
+                            <li><a href="{{ route('pricings') }}">Pricing</a></li>
+                            <li><a href="https://appforshare.io/blog">Blog</a></li>
+                            <li><a type="button" class="login_btn" data-toggle="modal"
+                                    data-target="#LoginRegisterModal">Login</a></li>
+                            <li><a type="button" class="register_btn" data-toggle="modal"
+                                    data-target="#LoginRegisterModal">Register</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-6 col-lg-3 col-xl-3 mts-20">
+                    <div class="firstSecBottLef">
+                        <h4>Must Read</h4>
+                    </div>
+                    <div class="firstSecBotrRigh">
+                        <ul>
+                            <li><a href="https://appforshare.io/blog/links-availability-on-diawi-and-other-apps/">
+                                    Shareable
+                                    Links Expiry </a></li>
+                            <li><a href="https://appforshare.io/blog/appforshare-io-a-diawi-alternative/">
+                                    Appforshare.io vs
+                                    Diawi </a></li>
+                            <li><a href="https://appforshare.io/blog/how-to-enable-unknown-sources-on-android/"> Enable
+                                    Unknown Sources - Android </a></li>
+                            <li><a href="https://appforshare.io/blog/most-common-upload-errors/"> Most Common Upload
+                                    Errors
+                                </a></li>
+                            <li><a
+                                    href="https://appforshare.io/blog/over-the-air-ota-app-installation-of-apps-everything-you-need-to-know/">
+                                    OTA App Installations </a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4 mts-20">
+                    <div class="footerInnrbttm1">
+                        <h4>Support</h4>
+                        <p><a href="mailto:suppot@appforshare.io">suppot@appforshare.io</a></p>
+                    </div>
+                    <div class="footerInnrbttm3">
+                        <h4>Read Reviews</h4>
+                        <ul>
+                            <li><a target="_blank" href="https://reviews.financesonline.com/p/appforshare/"><img
+                                        src="{{ asset('assets/footer-img/financesonline.png') }}"></a></li>
+                            <li><a target="_blank" href="https://www.capterra.com/p/237232/Appforshareio/"><img
+                                        src="{{ asset('assets/footer-img/capterra.png') }}"></a></li>
+                            <li><a target="_blank" href="https://www.g2.com/products/appforshare/reviews"><img
+                                        src="{{ asset('assets/footer-img/g2_logo.png') }}"></a></li>
+                            <li><a target="_blank"
+                                    href="https://www.getapp.com/it-management-software/a/appforshare-io/"><img
+                                        src="{{ asset('assets/footer-img/getapp-logo.png') }}"></a></li>
+                            <li><a target="_blank" href="https://slashdot.org/software/p/Appforshare.io/"><img
+                                        src="{{ asset('assets/footer-img/slashdot-log-01 (1).png') }}"></a></li>
+                            <li><a target="_blank" href="https://sourceforge.net/software/product/Appforshare.io/"><img
+                                        src="{{ asset('assets/footer-img/sourceforge-logo-180x180 (1).png') }}"></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="footerInnrbttm2">
+                        <h4>Connect With appforshare</h4>
+                        <ul>
+                            <li><a target="_blank" href="https://www.facebook.com/appforshare/"><img
+                                        src="{{ asset('assets/footer-img/facebook.svg') }}"></a></li>
+                            <li><a target="_blank" href="https://www.linkedin.com/company/appforshare-io/"><img
+                                        src="{{ asset('assets/footer-img/linkedin.svg') }}"></a></li>
+                            <li><a target="_blank" href="https://twitter.com/appforshareio"><img
+                                        src="{{ asset('assets/footer-img/twitter-.svg') }}"></a></li>
+                            <li><a target="_blank" href="https://www.instagram.com/appforshareio/"><img
+                                        src="{{ asset('assets/footer-img/instagram.svg') }}"></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="main-footer">
+            <div class="footer-center">
+                <span>© Copyright {{ date('Y') }}. <a href="https://appforshare.io" target="_blank">appforshare.io</a>
+                    All
+                    rights reserved.</span>
+                <p><a href="#">Privacy Policy</a> | <a href="#">Terms & Conditions</a></p>
+            </div>
+        </div>
+    </footer>
+    <!-- ======= End Footer Section ======= -->
+    <script>
+        //(function(d, s, id) {
+        //   var js, fjs = d.getElementsByTagName(s)[0];
+        //   if (d.getElementById(id)) return;
+        //   js = d.createElement(s); js.id = id;
+        //   js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js#xfbml=1&version=v2.12&autoLogAppEvents=1';
+        //   fjs.parentNode.insertBefore(js, fjs);
+        //}(document, 'script', 'facebook-jssdk'));
+    </script>
+    <!--<div class="fb-customerchat"
+           page_id="106868288360824">
+           </div>-->
+    <!-- End Footer Section Css -->
+
+    <style>
+        .error {
+            color: red;
+            font-size: 12px;
+            margin: 0;
+        }
+    </style>
+
+    <script>
+        if ($("#reviews-sidebar-form").length > 0) {
+            $("#reviews-sidebar-form").validate({
+
+                rules: {
+                    name: {
+                        required: true,
+                    },
+                    rating: {
+                        required: true,
+                    },
+                    email: {
+                        email: true,
+                    }
+                },
+                messages: {
+                    name: {
+                        required: "Please enter name",
+                    },
+                    rating: {
+                        required: "Please select rating",
+                    },
+                    email: {
+                        email: "Please enter valid email",
+                    }
+                },
+                submitHandler: function (form) {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+                    $('#send_form').html('Sending..');
+                    $.ajax({
+                        url: "{{ route('reviewStore') }}",
+                        type: "POST",
+                        data: $('#reviews-sidebar-form').serialize(),
+                        success: function (response) {
+                            $('#send_form').html('Submit');
+                            $('#res_message').show();
+                            $('#res_message').html(response.msg);
+                            $('#msg_div').removeClass('d-none');
+
+                            document.getElementById("reviews-sidebar-form").reset();
+                            setTimeout(function () {
+                                $('#res_message').hide();
+                                $('#msg_div').hide();
+                            }, 10000);
+                            $('.sidebar-reviews').toggleClass('active')
+                            $('.toggle').toggleClass('active')
+                        }
+                    });
+                }
+            })
+        }
+    </script>
+
+
+    <!-- Login and Register Popup Script Start -->
+    <script>
+        $('#login-form').submit(function (e) {
+            e.preventDefault(); // avoid to execute the actual submit of the form.
+
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(), // serializes the form's elements.
+                success: function (data) {
+                    window.dataLayer.push({ 'event': 'log-in', 'platform': 'email' });
+                    toastr.success("Successfully Logged In");
+                    window.location.reload();
+                },
+                error: function (data) {
+                    toastr.error("These credentials do not match our records");
+                }
+            });
+        });
+
+        $('#register-form').submit(function (e) {
+            e.preventDefault(); // avoid to execute the actual submit of the form.
+
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(), // serializes the form's elements.
+                success: function (data) {
+                    if (data.status == 1) {
+                        $('#register-form').hide();
+                        $('#user_id').val(data.user_id);
+                        $('#otp-form').show();
+                        // window.dataLayer.push({'event': 'sign-up', 'platform': 'email'});
+                        //  toastr.success("Successfully Logged In");
+                        //  window.location.reload();
+                    } else {
+                        if (data.errors.length > 0) {
+                            toastr.error(data.errors[0]);
+                        }
+                    }
+                }
+            });
+        });
+
+        $('#otp-form').submit(function (e) {
+            e.preventDefault();
+
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(), // serializes the form's elements.
+                success: function (data) {
+                    if (data.status == 1) {
+                        window.dataLayer.push({ 'event': 'sign-up', 'platform': 'email' });
+                        toastr.success("Successfully Logged In");
+                        window.location.reload();
+                    } else {
+                        toastr.error(data.error);
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(".login_btn").click(function () {
+            $(".regformDD").hide();
+            $(".log-fm-JY").hide();
+            $(".logformDD").show();
+            $(".social-login-JY").show();
+            $(".signup-section").show();
+        });
+
+        $(".register_btn").click(function () {
+            $(".logformDD").hide();
+            $(".reg-fm-JY").hide();
+            $(".regformDD").show();
+            $(".social-login-JY").show();
+            $(".signin-section").show();
+        });
+
+        $(".signinwithEmail").click(function () {
+            $(".signup-section").hide();
+            $(".social-login-JY").hide();
+            $(".log-fm-JY").show();
+        });
+
+        $(".allSigninOption ").click(function () {
+            $(".log-fm-JY").hide();
+            $(".signup-section").show();
+            $(".social-login-JY").show();
+        });
+
+        $(".signupwithEmail").click(function () {
+            $(".signin-section").hide();
+            $(".social-login-JY").hide();
+            $(".reg-fm-JY").show();
+        });
+
+        $(".allSignupOption").click(function () {
+            $(".reg-fm-JY").hide();
+            $(".signin-section").show();
+            $(".social-login-JY").show();
+        });
+    </script>
+    <!-- End Login and Register Popup Script -->
+
+    <!-- Toastr Js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+        integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Contact Us Popup and Side Bar Form Submit Script Start -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+    <script type="text/javascript">
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $('#contact-sidebar-form').on('submit', function (event) {
+            event.preventDefault();
+            $('#name-error2').text('');
+            $('#email-error2').text('');
+            $('#phone-error2').text('');
+            $('#your_message-error2').text('');
+
+            name = $('#name2').val();
+            email = $('#email2').val();
+            phone = $('#phone2').val();
+            your_message = $('#your_message2').val();
+
+            $.ajax({
+                url: "{{ route('contact') }}",
+                type: "POST",
+                data: {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    your_message: your_message,
+                },
+                success: function (response) {
+                    console.log(response);
+                    if (response) {
+                        toastr.success("Thanks for contacting us! We Will Get Back to you Soon.");
+                        $("#contact-sidebar-form")[0].reset();
+                        $('.sidebar-contact').toggleClass('active')
+                        $('.toggle').toggleClass('active')
+                    }
+                },
+                error: function (response) {
+                    $('#name-error2').text(response.responseJSON.errors.name);
+                    $('#email-error2').text(response.responseJSON.errors.email);
+                    $('#phone-error2').text(response.responseJSON.errors.phone);
+                    $('#your_message-error2').text(response.responseJSON.errors.your_message);
+                }
+            });
+        });
+
+        $('#contact-form').on('submit', function (event) {
+            event.preventDefault();
+            $('#name-error3').text('');
+            $('#email-error3').text('');
+            $('#phone-error3').text('');
+            $('#your_message-error3').text('');
+
+            name = $('#name3').val();
+            email = $('#email3').val();
+            phone = $('#phone3').val();
+            your_message = $('#your_message3').val();
+
+            $.ajax({
+                url: "{{ route('contact') }}",
+                type: "POST",
+                data: {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    your_message: your_message,
+                },
+                success: function (response) {
+                    console.log(response);
+                    if (response) {
+                        toastr.success("Thanks for contacting us! We Will Get Back to you Soon.");
+                        $("#contact-form")[0].reset();
+                    }
+                },
+                error: function (response) {
+                    $('#name-error3').text(response.responseJSON.errors.name);
+                    $('#email-error3').text(response.responseJSON.errors.email);
+                    $('#phone-error3').text(response.responseJSON.errors.phone);
+                    $('#your_message-error3').text(response.responseJSON.errors.your_message);
+                }
+            });
+        });
+
+    </script>
+    <!-- Contact Us Popup and Side Bar Form Submit Script End -->
+
+
+    <!-- Reviews Side SideBar Toggle script start  -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.toggle2').click(function () {
+                $('.sidebar-reviews').toggleClass('active')
+                $('.toggle2').toggleClass('active')
+            })
+        })
+    </script>
+    <!-- End Reviews SideBar Toggle script -->
+
+
+    <!-- Contact us SideBar Toggle script start  -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.toggle').click(function () {
+                $('.sidebar-contact').toggleClass('active')
+                $('.toggle').toggleClass('active')
+            })
+        })
+    </script>
+    <!-- End Contact us SideBar Toggle script -->
+
+
+    {!! Toastr::message() !!}
+    <script>
+        @if ($errors -> any())
+            @foreach($errors -> all() as $error)
+        toastr.error('{{ $error }}', 'Error!!', {
+            closeButton: true,
+            progressBar: true,
+        });
+        @endforeach
+        @endif
+    </script>
+
+    @yield('scripts')
+    <script type="text/javascript">
+        var infolinks_pid = 3349209;
+        var infolinks_wsid = 0;
+    </script>
+    <script type="text/javascript" src="http://resources.infolinks.com/js/infolinks_main.js"></script>
+</body>
+
+</html>
